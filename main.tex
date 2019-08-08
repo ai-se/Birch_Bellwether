@@ -1,0 +1,468 @@
+
+%\documentclass[sigconf]{acmart}
+\documentclass[sigconf]{acmart} 
+\pdfoutput=1
+\usepackage[shortlabels]{enumitem}
+\usepackage{balance}
+\usepackage{dblfloatfix}
+
+\usepackage{hyperref}
+\usepackage{cleveref}
+%\usepackage{color}
+%\usepackage{booktabs} % For formal tables
+%\usepackage{graphicx}
+%\usepackage{float}
+%\usepackage{listings}
+%\usepackage{url}
+%\usepackage{comment}
+%\usepackage{multirow}
+%\usepackage{rotating}
+% \usepackage{bigstrut}
+% \usepackage{graphics}
+% \usepackage{picture}
+%\usepackage{cite}
+
+\makeatletter
+\let\th@plain\relax
+\makeatother
+
+
+\newcommand{\bi}{\begin{itemize}[leftmargin=0.4cm]}
+	\newcommand{\ei}{\end{itemize}}
+\newcommand{\be}{\begin{enumerate}[leftmargin=0.4cm]}
+	\newcommand{\ee}{\end{enumerate}}
+
+% \usepackage{tabularx}
+% \usepackage{hhline}
+% \usepackage[export]{adjustbox}
+
+\definecolor{ao(english)}{rgb}{0.0, 0.5, 0.0}
+
+\definecolor{Gray}{gray}{0.85}
+\usepackage{tikz}
+\usepackage{framed}
+\usepackage[framed]{ntheorem}
+\usepackage{multirow}
+\usetikzlibrary{shadows}
+
+\theoremclass{Lesson}
+\theoremstyle{break}
+
+% inner sep=10pt,
+\tikzstyle{thmbox} = [rectangle, rounded corners, draw=black, fill=Gray!40]
+\newcommand\thmbox[1]{%
+	\noindent\begin{tikzpicture}%
+	\node [thmbox] (box){%
+		\begin{minipage}{.94\textwidth}%
+		\vspace{-0.1cm}#1\vspace{-0.1cm}%
+		\end{minipage}%
+	};%
+	\end{tikzpicture}}
+
+\let\theoremframecommand\thmbox
+\newshadedtheorem{lesson}{Result}
+
+
+% \setcopyright{none}
+
+% % \acmDOI{10.475/123_4}
+% % % ISBN
+% % \acmISBN{123-4567-24-567/17/08}
+% \acmConference[ICSE SEIP'18]{International Conference on Software Engineering, SE in practice track}{May 2018}{Gothenburg, Sweden} 
+% \acmYear{2018}
+% \copyrightyear{2018}
+
+% \acmPrice{00.00}
+
+%\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+%\pagestyle{plain}
+
+\copyrightyear{2018} 
+\acmYear{2018} 
+\setcopyright{acmcopyright}
+\acmConference[ICSE-SEIP '18]{40th International Conference on Software Engineering: Software Engineering in Practice Track}{May 27-June 3, 2018}{Gothenburg, Sweden}
+\acmBooktitle{ICSE-SEIP '18: 40th International Conference on Software Engineering: Software Engineering in Practice Track, May 27-June 3, 2018, Gothenburg, Sweden}
+\acmPrice{15.00}
+\acmDOI{10.1145/3183519.3183549}
+\acmISBN{978-1-4503-5659-6/18/05}
+
+
+\title{BUBBLE}
+\subtitle{An Approach to find generality in Software Engineering}
+
+\author{Suvodeep Majumder, Rahul Krishna and Tim Menzies}
+\affiliation{Computer Science, NCSU, USA, North Carolina}  
+\email{[smajumd3,rkrishn]@ncsu.edu, tim@ieee.org}
+
+
+\begin{abstract}
+A  software project has ``Hero  Developers''.
+
+\end{abstract}
+
+
+% \begin{CCSXML}
+% <ccs2012>
+% <concept>
+% <concept_id>10011007.10011074.10011081.10011082.10011083</concept_id>
+% <concept_desc>Software and its engineering~Agile software development</concept_desc>
+% <concept_significance>500</concept_significance>
+% </concept>
+% </ccs2012>
+% \end{CCSXML}
+
+
+% \ccsdesc[500]{Software and its engineering~Agile software development}
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10011074.10011081.10011082.10011083</concept_id>
+<concept_desc>Software and its engineering~Agile software 
+development</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+
+\ccsdesc[500]{Software and its engineering~Agile software development}
+
+
+\keywords{Issue, Bug, Commit, Hero, Core, Github, Productivity}
+
+\maketitle
+
+%\pagestyle{plain}
+
+\section{Introduction}
+How should we reason about SE quality?  Should we use  general models that hold over many projects? Or must we use an ever changing set of ideas that are   continually adapted to the task at hand? 
+Or does the truth lie somewhere in-between?  
+
+This is an open and important question. After a decade of intensive research into automated software analytics, what general principles have we learned? While that work has generated specific results about specific projects~\cite{Bird:2015,menzies2013software}, it has failed (so far) to deliver general principles that are demonstrably useful across many projects~\cite{menzies2013guest} (for an example of how {\em more} data can lead to {\em less} general conclusions, see below in {\S}2a).
+
+Is that the best we can do? Are there general principles we can use to guide project management, software standards, education,   tool development, and legislation about software? 
+Or is  software engineering some ``patchwork quilt'' of ideas and methods where it only makes sense to reason about specific, specialized, and small sets of related projects? Not to mention, if software was a ``patchwork'' of ideas,then that would  there would be no stable conclusions about what constitutes best practice for software engineering (since those best practices would keep changing as we move from project to project). As discussed in Table~\ref{tbl:why}, such conclusion instability would have detrimental implications for {\em generality, trust, insight, training}, and {\em tool development}.
+
+One  explanation for the limited conclusions (so far) from automated analytics is  {\em how much} data we are using for analysis. A typical software analytics research paper uses less than a few dozen projects  (exceptions: see~\cite{krishna18a, zhao17, agrawal18}). Such small samples can never represent something as diverse as software engineering. Although recent years there have been some studies~\cite{krishna16a,krishna2017simpler,nair19a,mensah18z,mensah2017stratification,mensah2017investigating} to explore generality in Software Engineering. One such process is `` Bellwether ''~\cite{krishna16a,krishna2017simpler,nair19a}, which suggests When local data is scarce, sometimes it is possible to use data collected from other projects either at the local site, or other sites. That is, when building software quality predictors, it might be best to look at more than just the local data. Thus saying there may be data which can be generalized to build models, when local prediction is not possible or useful. However finding such generalizable dataset can be very expensive, as the process suggest to compare each dataset against another to find the generalizable dataset and the previous studies uses small samples to demonstrate the process. 
+
+The central insight of this paper is to find the presence or absence of generality in software engineering, by choosing a suitable source (a.k.a. ``bellwethe'') to learn from, plus a simple transfer learning scheme, which outperforms local learning models. Using this insight, this paper proposes BUBBLE, a novel bellwether based transfer learning scheme, which can identify a suitable source and use it to find near-optimal data source. BUBBLE significantly reduces the cost (in terms of the number of comparisons) to find and build generalized performance models. BUBBLE applies divide and conquer principle by utilizing a hierarchical clustering model to divide the large number of samples in to smaller clusters at every level, and then find and promote bellwether in a bottom-up approach. We evaluate out approach(a.k.a. ``BUBBLE'') using 697 projects and demonstrate that BUBBLE is beneficial.
+
+In a nutshell the contributions of this paper are - 
+
+\bi
+
+\item \textbf{Hierarchical bellwethers as a transfer learner:}
+
+\item \textbf{Showing inherent generality in SE datasets:}
+
+\item \textbf{Richer Replication Package:}
+
+\ei
+
+\section{Background and Related Work}
+\label{sec:literature}
+
+\subsection{Motivation}
+\label{sec:Motivation}
+There are many reasons to seek stable general conclusions in software engineering. If our conclusions about best practices for SE projects keep changing, that will be detrimental to generality, trust, insight, training, and tool development.
+
+\bi
+
+\item \textbf{Generality:} Data science for software engineering cannot be called a ``science'' unless it makes general conclusions that hold across  multiple  projects. If we cannot offer general rules across a large number of software projects, then it is   difficult to demonstrate such generality.
+
+\item \textbf{Trust:} Hassan~\cite{Hassan17} cautions that managers lose faith in software analytics if its models keep changing since  the assumptions used to make prior policy decisions may no longer hold.
+
+\item \textbf{Insight:} Kim et al.~\cite{Kim2016}, say  that the aim of software analytics is to obtain actionable insights that help practitioners accomplish software development goals. For Tan et al.~\cite{tan2016defining}, such   insights  are a core deliverable. Sawyer et al. agrees, saying that  insights are the key driver for businesses to invest in data analytics initiatives~\cite{sawyer2013bi}. Bird, Zimmermann, et al.~\cite{Bird:2015} say that such  insights occur when users reflect, and react, to the output of a model generated via software analytics. But if  new models keep being generated in new projects, then that exhausts the ability of  users to draw insight from  new data.
+
+\item \textbf{Training:} Another concern is what do we train novice software engineers or newcomers to a project? If our models are not stable, then it hard to teach what factors  most influence software quality.
+
+\item \textbf{Tool development:} Further to the last point--- if we are unsure what factors most influence quality, it is difficult to design and implement and deploy tools that can successfully improve that quality.
+
+\ei
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figs/predictive_power.png}
+    \caption{Two hypothetical results about how training set size might effect the efficacy of quality prediction for software projects.}
+    \label{fig:predictive_power}
+\end{figure}
+
+Petersen and Wohlin~\cite{Petersen2009} argue that for empirical SE, context matters.
+That is, they would predict that one model  will NOT  cover all  projects and that tools that report  generality  over many software projects need to also know the {\em communities} within which those conclusions   apply. Hence, this work divides into (a)~automated methods for finding sets of projects in the same {\em community}; and (b)~within each {\em community}, find the model what works best. 
+
+The {\em size} of the communities found in this way would have a profound impact on how we should reason about software engineering. Consider the hypothetical results of Figure~\ref{fig:predictive_power}. 
+The \textcolor{ao(english)}{{\bf GREEN}} curve shows
+some quality predictor that (hypothetically) gets better, the more projects it learns from (i.e. higher levels in the hierarchical cluster). After about 2 levels, the \textcolor{ao(english)}{{\bf GREEN}} curve's growth stops and we would say that community size here was around cluster size in level 1. In this case, while we could not offer a single model that cover {\em all} of SE, we could offer a handful of models, each of which would be relevant to project clusters in that level. Accordingly, we would say that there are many cases where  wisdom from prior projects can be readily applied to guide future projects and (b)~the generality issues raised are not be so pressing.
+
+Now consider the hypothetical \textcolor{red}{{\bf RED}} curve of 
+Figure~\ref{fig:predictive_power}. Here, we see that (hypothetically)  learning from more projects makes quality predictions worse which means the our 10,000 projects break up into ``communities'' of size one.
+In this case,  (a)~principles about what is ``best practice'' for different software projects
+would be constantly change (whenever we jump from small community to small community);
+and (b)~the generality issues would be become open and urgent concerns for the SE analytics community.
+
+
+\subsection{Related Work}
+\label{sec:related}
+
+In this section, we ask ``Why even bother to transfer lessons learned between projects?''. More specifically, we review the evidence that  it is useful to explore more than just the local data. This evidence falls into four groups:
+
+\begin{enumerate}
+
+\item[a.] \textbf{The lesson on big data is that that the {\em more} training data, the {\em better} the learned model.:} Vapnik~\cite{vapnik14} discusses examples where models accuracy improves to nearly 100\%, just by training on $10^2$ times as much data. This effect has yet to be seen in SE data~\cite{menzies2013guest} but that might just mean we have yet to use enough training data (hence, this study). 
+
+\item[b.] \textbf{We need to learn from more data since there is very little agreement on what has been learned to far:} Another reason to try generalizing across more SE data is that, among developers, there is little agreement on what many issues relating to software:
+\bi
+    \item
+    According to Passos et al.~\cite{passos11},  developers often  assume that the lessons they learn from a few past projects are general to all their future projects. They comment, ``past experiences were taken into account without much consideration for their context'' ~\cite{passos11}. 
+	\item
+	J{\o}rgensen \& Gruschke~\cite{Jo09} offer a similar warning. They report that the suppose software engineering ``gurus'' rarely use lessons from past projects to improve their future reasoning and that such poor past advice can be detrimental to new projects.~\cite{Jo09}.
+    \item 
+    Other studies have shown some widely-held views are   now questionable given new evidence. Devanbu et al. examined responses from 564 Microsoft software developers from around
+	the world. They comment programmer beliefs can vary with each project, but do not necessarily
+	correspond with actual evidence in that project~\cite{De16}. 
+\ei
+	
+The good news is that, using software analytics, we can correct the above misconceptions. If data mining shows that doing  XYZ is bug prone, then we could  guide developers to avoid XYZ. But will developers listen to us? If they ask ``are we sure  XYZ causes problems?'', can we say that we have mined enough projects to ensure that XYZ is problematic? 
+
+It turns out that developers are not the only ones confused about how various factors influence software projects. Much recent research calls into question  the``established widoms'' of SE field. For example, here is a list of recent conclusions that contradict prior conclusions:
+
+\bi
+
+    \item In stark contrast to  much prior research, pre- and post- release failures are not connected~\cite{fenton2000quantitative};
+    
+    \item Static code analyzers perform no better than simple statistical predictors~\cite{Fa13}; 
+    
+    \item The language construct GOTO, as used in contemporary practice, is rarely considered harmful~\cite{nagappan2015empirical};
+    
+    \item Strongly typed languages are not associated with successful projects~\cite{ray2014large};  
+    
+    \item Test-driven development is not any better than "test last"~\cite{fucci2017dissection};
+    
+    \item Delayed issues are not exponentially more expensive to fix~\cite{menzies2017delayed};
+
+\ei
+
+Note that if the reader disputes any of the above, then we ask how would you challenge the items on this list? Where would you get the data, from enough projects, to   successfully refute the above? And where would you get that data? And how would you draw conclusions from that large set?
+
+\item[c.]  \textbf{Imported data can be more useful than local data:} Another benefit of  importing data from other projects is that, sometimes, that imported data can be better than the local information. For example, Rees-Jones reports in one study that while building predictors
+for Github close time  for open source projects~\cite{rees2017better} using data from other projects performs much better then building models using {\em local learning} (because there is better  information {\em there} than {\em here}).
+
+
+\item[d.]  \textbf{When there is insufficient local data, learning from other projects is very useful:} When developing new software in  novel areas, it is useful to draw on the relevant  experience  from related areas with a larger experience base.This is particularly true when developers are doing something that is novel to them, but has been widely applied elsewhere
+For example, Clark and Madachy~\cite{clark15} discuss 65 types of software they see        under-development by the US Defense Department in 2015.   Some of these types are very common (e.g. 22 ground-based communication systems) but other types are very rare (e.g. only  one avionics communication system). (e.g. workers on   flight avionics   might check for lessons learned from ground-based communications). Developers  working in an uncommon area (e.g. avionics communications) might want to transfer in lessons from more common areas (e.g. ground-based communication).
+
+\end{enumerate}
+
+This fuels the art of moving data and/or lessons learned from one project or another is Transfer Learning. This is when there is insufficient data to apply data miners to learn defect predictors, transfer learning can be used to transfer lessons learned from other source projects S to the target project T .
+
+Initial experiments with transfer learning offered very pessimistic results. Zimmermann et al.~\cite{zimmermann2009cross} tried to port models between two web browsers (Internet Explorer and Firefox) and found that cross-project prediction was still not consistent: a model built on Firefox was useful for Explorer, but not vice versa, even though both of them are similar applications. Turhan’s initial experimental results were also very negative: given data from 10 projects, training on S = 9 source projects and testing on T = 1 target projects resulted in alarmingly high false positive rates (60\% or more). Subsequent research realized that data had to be carefully sub-sampled and possibly transformed before quality predictors from one source are applied to a target project. Transfer learning can be have two variants - 
+
+\bi
+    \item \textbf{Homogeneous Transfer Learning:} This kind of transfer learning operates on source and target data that contain the same attributes.
+    
+    \item \textbf{Heterogeneous Transfer Learning:} This type of transfer learning operates on source and target data that contain the different attributes.
+\ei
+
+Another way of to divide transfer learning is the approach that is followed. There are  2 approaches that is frequently used in many research  - 
+
+\bi
+    \item \textbf{Similarity Based Approach:} In this approach we can transfer some/all subset of the rows or columns of data from source to target. For example, the Burak filter~\cite{turhan09} builds its training sets by finding the k = 10 nearest code modules in S for every $ t \in T $. However, the Burak filter suffered from the all too common instability problem (here, whenever the source or target is updated, data miners will learn a new model since different code modules will satisfy the k = 10 nearest neighbor criteria). Other researchers ~\cite{kocaguneli2012, kocaguneli2011find} doubted that a fixed value of k was appropriate for all data. That work recursively bi-clustered the source data, then pruned the cluster sub-trees with greatest ``varianc'' (where the ``variance'' of a sub-tree is the variance of the conclusions in its leaves). This method combined row selection with row pruning (of nearby rows with large variance). Other similarity methods~\cite{Zhang16aa} combine domain knowledge with automatic processing: e.g. data is partitioned using engineering judgment before automatic tools cluster the data. To address variations of software metrics between different projects, the original metric values were discretized by rank transformation according to similar degree of context factors.
+    
+    \item \textbf{Dimensionality Transformation Based Approach:} In this approach we manipulate the raw source data until it matches the target. An initial attempt on performing transfer learning with Dimensionality transform was undertaken by Ma et al.~\cite{Ma2012} with an algorithm called transfer naive Bayes (TNB). This algorithm used information from all of the suitable attributes in the training data. Based on the estimated distribution of the target data, this method transferred the source information to weight instances the training data. The defect prediction model was constructed using these weighted training data. Nam et al.~\cite{Nam13} originally proposed a transform-based method that used TCA based dimensionality rotation, expansion, and contraction to align the source dimensions to the target. They also proposed a new approach called TCA+, which selected suitable normalization options for TCA, When there are no overlapping attributes (in heterogeneous transfer learning) Nam et al.~\cite{Nam2015} found they could dispense with the optimizer in TCA+ by combining feature selection on the source/target following by a Kolmogorov-Smirnov test to find associated subsets of columns. Other researchers take a similar approach, they prefer instead a canonical-correlation analysis (CCA) to find the relationships between variables in the source and target data~\cite{jing2015heterogeneous}.
+\ei
+
+Considering all the attempts at transfer learning sampled above, suggested a surprising lack of consistency in the choice of datasets, learning methods, and statistical measures while reporting results of transfer learning. This issue was addressed by ``Bellwether'' suggested by Krishna et al. ~\cite{krishna2017simpler,krishna16}. which is a simple transfer learning technique is defined in 2- folds namely the Bellwether effect and the Bellwether method:
+
+\bi
+
+    \item \textbf{The Bellwether effect} states that, when a community works on multiple software projects,  then there exists one exemplary project, called the bellwether, which can define predictors for the others.
+    
+    \item \textbf{The Bellwether method} is where we search for the exemplar bellwether project and construct a transfer learner with it. This transfer learner is then used to predict for effects in future data for that community.
+
+\ei
+
+In their paper Krishna et al. performs experiment with communities of 3, 5 and 10 projects in each, and shows that bellwethers are not rare, their prediction performance is better than local learning, they do fairly well when compared with State of the Art transfer learning methods discussed above and with selection of bellwether shows a consistency for choice of source dataset for transfer learning. This motivated us to use ``Bellwether'' as our choice of method for transfer learning to search for generality in SE datasets. But as per Krishna et al. in order to find bellwether we need to do a $ N*(N-1) $ comparison which is order of $ N^2 $ (N being the number of projects in community). This indeed a very expensive computation. This motivated our study to find generality in SE datasets using a faster Bellwether method. 
+
+Include details about BIRCH and effect of clustering and talk about divide and conquer. 
+
+\section{Data Collection}
+\label{sec:Data Collection}
+
+\subsection{Data}
+\label{sec:data}
+
+To perform our experiments we choose to work with defect prediction datasets. We use data collected by zhang et al.~\cite{zhang15}. The original data was initially collected by Mockus et al.~\cite{mockus2009amassing} from SourceForge and GoogleCode and was updated till 2010. The dataset contains the full history of about 154K projects that are hosted on SourceForge and 81K projects that are hosted on GoogleCode to the date they were collected. In the original dataset each file contained the revision history and commit logs linked using a unique identified. Although there were 235K projects in the original database, we know from previous literature surveys and experience there were many trivial and non-software development projects. zhang et al. cleaned the dataset using 5 different criteria which resulted in 1385 projects being selected in the final datasets. As part of this experiment we also included few filters to select a subset of 1385 projects, which are useful for our experiment. This eventually gave us a dataset of 697 projects. The filters applied to filter out trivial projects are - 
+
+\bi
+
+    \item \textbf{Programming Languages:} Filtering Out Projects by Programming Languages(only object-oriented i.e *.c, *.cpp, *.cxx, *.cc, *.cs, *.java, and *.pas). This was done as the dataset was collected using a commercial tool, called Understand~\cite{visualize}(which supports the object oriented programming languages) , to compute code metrics. 
+
+    \item \textbf{Projects with a Small Number of Commits:} As small number of commits can mean the projects do not follow a proper SE development process or they are very new, also small number of commits can not provide enough information for computing process metrics and mining defect data. Thus zhang et al. removed any projects with less than 32 commits(25 \% quantile of the number of commits as the threshold).
+    
+    \item \textbf{Projects with Lifespan Less Than One Year:} zhang et al. collected data in the six-months period using a split date from the first commit and compute process metrics using the change history in the six-months period before the split date. For this reason projects with a lifespan less than one year were filtered out.
+    
+    \item \textbf{Projects with Limited Defect Data:} For this study defect data was mined using commit messages and bug tracking reports. zhang et al. in their study counted the number of fix-inducing and non-fixing commits from a one-year period and used 152 and 1,689 commits for fix-inducing and non-fixing  respectively for SourceForge. Similarly  92 and 985 commits for GoogleCode. This number was decided by calculating the 75 \% quantile of the number of fix-inducing and non-fixing commits.
+    
+    \item \textbf{Projects Without Fix-Inducing Commits:} zhang et al. filtered out projects that have no fix-inducing commits during six months as abnormal projects, as projects in defect prediction studies need to contain both defective and non-defective commits.
+    
+    \item \textbf{Projects with less than 50 rows:} We removed any project with less than 50 rows as they are too small to build a meaningful predictor. 
+
+\ei
+
+Along with above filtering criteria, there were few projects which didn't have enough fix-inducing vs non-fixing data points to to create a stratified k=5 fold cross-validation and we removed those projects from the final datasets. These criteria culled 99\% of projects by zhang et al. and culled 54\% of the remaining by our criteria, thus resulted in 697 projects in the final dataset.
+
+From these selected projects, the data was labeled using issue tracking system and commit messages. If a project used issue tracking system for maintaining issue/defect history the data was labeled using that. But as per zhang et al. 42\% of the projects didn't not used issue tracking systems. For these projects labels were created analyzing commit messages by tagging them as fix-inducing commit if commit message matches the following regular expression - 
+
+\begin{center}
+\textit{(bug |fix |error |issue |crash |problem |fail |defect |patch)}
+\end{center}
+ 
+
+\subsection{Metric Extraction}
+\label{sec:Metric Extraction}
+
+For building any defect predictor we rely on software metrics. Software metrics can be categorized into 3 types according to Xenos \cite{Xenos} distinguishes software metrics as  follows (a) {\em Product metrics} are metrics that are directly related to the product itself, such as code statements, delivered executable, manuals, and strive to measure product quality, or attributes of the product that can be related to product quality. (b) {\em Process metrics} focus on the process of software development and measure process characteristics, aiming to detect problems or to push forward successful practices. Lastly, (c) {\em personnel metrics} (a.k.a. {\em resource metrics}) are those related to the resources required for software development and their performance. The capability, experience of each programmer and communication among all the programmers are related to product quality \cite{wolf2009predicting,de2004sometimes,cataldo2013coordination,cataldo2007coordination}. zhang et al. selected and calculated 21 product and 5 process metrics to build their universal defect prediction model, we will be using the same set of metrics for our study. The product metrics are computed by the Understand tool~\cite{visualize} using the files from the snapshot on the split date of 6 months. The process metrics are computed using the change history in the six-months period before the split date my manual collection of data using scripts. The metrics used in this study are described in table~\ref{tbl:metric}.
+
+\small{
+\begin{table}[]
+\caption{List of software metrics used in this study}
+\label{tbl:metric}
+\begin{tabular}{|c|c|l|p{2cm}|}
+\hline
+\multicolumn{1}{|l|}{Type}        & \multicolumn{1}{l|}{Metric level} & Metric Name & Metric Description             \\ \hline
+\multirow{21}{*}{Product Metrics} & \multirow{6}{*}{File}             & LOC         & Lines of Code                  \\ \cline{3-4} 
+                                  &                                   & CL          & Comment Lines                  \\ \cline{3-4} 
+                                  &                                   & NSTMT       & Number of Statements           \\ \cline{3-4} 
+                                  &                                   & NFUNC       & Number of Functions            \\ \cline{3-4} 
+                                  &                                   & RCC         & Ratio Comments to Code         \\ \cline{3-4} 
+                                  &                                   & MNL         & Max Nesting Level              \\ \cline{2-4} 
+                                  & \multirow{12}{*}{Class}           & WMC         & Weighted Methods per Class     \\ \cline{3-4} 
+                                  &                                   & DIT         & Depth of Inheritance Tree      \\ \cline{3-4} 
+                                  &                                   & RFC         & Response For a Class           \\ \cline{3-4} 
+                                  &                                   & NOC         & Number of Immediate Subclasses \\ \cline{3-4} 
+                                  &                                   & CBO         & Coupling Between Objects       \\ \cline{3-4} 
+                                  &                                   & LCOM        & Lack of Cohesion in Methods    \\ \cline{3-4} 
+                                  &                                   & NIV         & Number of instance variables   \\ \cline{3-4} 
+                                  &                                   & NIM         & Number of instance methods     \\ \cline{3-4} 
+                                  &                                   & NOM         & Number of Methods              \\ \cline{3-4} 
+                                  &                                   & NPBM        & Number of Public Methods       \\ \cline{3-4} 
+                                  &                                   & NPM         & Number of Protected Methods    \\ \cline{3-4} 
+                                  &                                   & NPRM        & Number of Private Methods      \\ \cline{2-4} 
+                                  & \multirow{3}{*}{Methods}          & CC          & McCabe Cyclomatic Complexity   \\ \cline{3-4} 
+                                  &                                   & FANIN       & Number of Input Data           \\ \cline{3-4} 
+                                  &                                   & FANOUT      & Number of Output Data          \\ \hline
+\multirow{5}{*}{Process Metrics}  & \multirow{5}{*}{File}             & NREV        & Number of revisions            \\ \cline{3-4} 
+                                  &                                   & NFIX        & Number of revisions a file     \\ \cline{3-4} 
+                                  &                                   & ADDED LOC    & Lines added                    \\ \cline{3-4} 
+                                  &                                   & DELETED LOC  & Lines deleted                  \\ \cline{3-4} 
+                                  &                                   & MODIFIED LOC & Lines modified                 \\ \hline
+\end{tabular}
+\end{table}
+}
+
+
+\section{Experimental Setup}
+\label{sec:Experimental}
+
+In this study we try to establish the presence of generality in SE datasets. In order to that we 
+
+\subsection{BIRCH}
+\label{subsec:BIRCH}
+
+\subsection{CFS}
+\label{subsec:CFS}
+
+\subsection{SMOTE}
+\label{subsec:SMOTE}
+
+\subsection{LR}
+\label{subsec:LR}
+   
+
+\section{Results}
+\label{sec:results}
+
+\subsection{RQ1: How common are heroes?}
+\label{sec:rq1}
+
+Recall that we define 
+
+
+
+\subsection{RQ2: How does team size affect the prevalence of hero projects?}
+
+Figure~\ref{fig:rq2a} and \ref{fig:rq2b} show the distribution of 
+
+
+
+
+
+
+\subsection{RQ3: Are hero projects associated with  better software quality ?}
+\label{sec:rq3}
+We divide this investigation into two steps: 
+
+\section{Discussion}
+\label{sec:discuss}
+What's old is new. Our results 
+
+\section{Threats to Validity}
+\label{sec:validity}
+
+As with any large scale empirical study, biases can affect the final
+results. Therefore, any conclusions made from this work
+must be considered with the following issues in mind:
+
+\bi 
+
+\item \textit{Internal Validity}
+ 
+    \bi
+    \item \textit{Sampling Bias}: Our conclusions are based on the 1,108+538 Public+Enterprise Github projects
+    that started this analysis.  It is possible that   different initial projects would have lead to different conclusions. That said, our initial sample is very large so we have some
+    confidence that this sample
+    represents an interesting range of projects. As evidence of that, we note that our sampling bias is less pronounced than other Github studies since we explored {\em both} Public and Enterprise projects (and many prior studies only explored Public projects.
+    \item \textit{Evaluation Bias}: 
+    In  RQ3b, we said that there is no difference between heroes or non-heroes on
+the time required to close issues, bugs and enhancements. While that statement is true, that conclusion is scoped by the evaluation metrics we used to write this paper. It is possible that, using other measurements, there may well be a difference in these different kinds of projects. This is a matter that needs to be explored in future research. 
+    \ei
+    
+\item \textit{Construct Validity}: At various places in this report, we made engineering decisions about (e.g.) team size and what
+constitutes a ``hero'' project. While
+those decisions were made using advice from
+the literature (e.g.~\cite{gautam2017empirical}),
+we acknowledge that other constructs might lead to different conclusions. 
+
+\item \textit{External Validity}:  We have relied on issues marked as a `bug' or `enhancement' to count bugs or enhancements, and bug or enhancement resolution times. In Github, a bug or enhancement might not be marked in an issue but in commits. There is also a possibility that the team of that project might be using different tag identifiers for bugs and enhancements. To reduce the impact of this problem, we  did take precautionary step to (e.g.,) include various tag identifiers from Cabot et al.~\cite{cabot2015exploring}. We also took precaution to remove any pull merge requests from the commits to remove any extra contributions added to the hero programmer. 
+
+\item \textit{Statistical Validity}: To increase
+the validity of our results, we applied
+ two statistical tests, bootstrap and the a12.
+ Hence, anytime in this paper we reported that ``X was different from Y'' then that report
+ was based on both an effect size
+ and a statistical significance test.
+\ei
+
+
+
+\section{Conclusion}
+\label{sec:concl}
+
+The established wisdom in the literature is to depreciate `
+
+\section{Acknowledgements}
+\label{sec:ack}
+
+The first and second authors conducted this research study as part
+of their internship at the industry in Summer, 2017. 
+
+\balance
+
+\bibliographystyle{ACM-Reference-Format}
+
+\bibliography{main}
+%\input{main.bbl} 
+\end{document}
