@@ -44,6 +44,27 @@
 \usepackage[framed]{ntheorem}
 \usepackage{multirow}
 \usetikzlibrary{shadows}
+\usepackage{listings}
+\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45} 
+\lstset{
+    language=Python,
+    basicstyle=\sffamily\fontsize{2.5mm}{0.7em}\selectfont,
+    breaklines=true,
+    prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+    frame=l,
+    keepspaces=false,
+    showtabs=false,
+    columns=fullflexible,
+    showspaces=false,
+    showstringspaces=false,
+    keywordstyle=\bfseries\sffamily,
+    emph={while, for , if ,data, def}, emphstyle=\bfseries\color{blue!50!black},
+    stringstyle=\color{green!50!black},
+    commentstyle=\color{red!50!black}\it,
+    numbers=left,
+    captionpos=t,
+    escapeinside={\%*}{*)}
+}
 
 \theoremclass{Lesson}
 \theoremstyle{break}
@@ -135,6 +156,7 @@ development</concept_desc>
 
 \maketitle
 
+\pagestyle{plain}
 %\pagestyle{plain}
 
 \section{Introduction}
@@ -209,11 +231,9 @@ and (b)~the generality issues would be become open and urgent concerns for the S
 
 In this section, we ask ``Why even bother to transfer lessons learned between projects?''. More specifically, we review the evidence that  it is useful to explore more than just the local data. This evidence falls into four groups:
 
-\begin{enumerate}
+\textbf{(a) The lesson on big data is that that the {\em more} training data, the {\em better} the learned model.} Vapnik~\cite{vapnik14} discusses examples where models accuracy improves to nearly 100\%, just by training on $10^2$ times as much data. This effect has yet to be seen in SE data~\cite{menzies2013guest} but that might just mean we have yet to use enough training data (hence, this study). 
 
-\item[a.] \textbf{The lesson on big data is that that the {\em more} training data, the {\em better} the learned model.:} Vapnik~\cite{vapnik14} discusses examples where models accuracy improves to nearly 100\%, just by training on $10^2$ times as much data. This effect has yet to be seen in SE data~\cite{menzies2013guest} but that might just mean we have yet to use enough training data (hence, this study). 
-
-\item[b.] \textbf{We need to learn from more data since there is very little agreement on what has been learned to far:} Another reason to try generalizing across more SE data is that, among developers, there is little agreement on what many issues relating to software:
+\textbf{(b) We need to learn from more data since there is very little agreement on what has been learned to far:} Another reason to try generalizing across more SE data is that, among developers, there is little agreement on what many issues relating to software:
 \bi
     \item
     According to Passos et al.~\cite{passos11},  developers often  assume that the lessons they learn from a few past projects are general to all their future projects. They comment, ``past experiences were taken into account without much consideration for their context'' ~\cite{passos11}. 
@@ -247,14 +267,13 @@ It turns out that developers are not the only ones confused about how various fa
 
 Note that if the reader disputes any of the above, then we ask how would you challenge the items on this list? Where would you get the data, from enough projects, to   successfully refute the above? And where would you get that data? And how would you draw conclusions from that large set?
 
-\item[c.]  \textbf{Imported data can be more useful than local data:} Another benefit of  importing data from other projects is that, sometimes, that imported data can be better than the local information. For example, Rees-Jones reports in one study that while building predictors
+\textbf{(c) Imported data can be more useful than local data:} Another benefit of  importing data from other projects is that, sometimes, that imported data can be better than the local information. For example, Rees-Jones reports in one study that while building predictors
 for Github close time  for open source projects~\cite{rees2017better} using data from other projects performs much better then building models using {\em local learning} (because there is better  information {\em there} than {\em here}).
 
 
-\item[d.]  \textbf{When there is insufficient local data, learning from other projects is very useful:} When developing new software in  novel areas, it is useful to draw on the relevant  experience  from related areas with a larger experience base.This is particularly true when developers are doing something that is novel to them, but has been widely applied elsewhere
+\textbf{(d) When there is insufficient local data, learning from other projects is very useful:} When developing new software in  novel areas, it is useful to draw on the relevant  experience  from related areas with a larger experience base.This is particularly true when developers are doing something that is novel to them, but has been widely applied elsewhere
 For example, Clark and Madachy~\cite{clark15} discuss 65 types of software they see        under-development by the US Defense Department in 2015.   Some of these types are very common (e.g. 22 ground-based communication systems) but other types are very rare (e.g. only  one avionics communication system). (e.g. workers on   flight avionics   might check for lessons learned from ground-based communications). Developers  working in an uncommon area (e.g. avionics communications) might want to transfer in lessons from more common areas (e.g. ground-based communication).
 
-\end{enumerate}
 
 This fuels the art of moving data and/or lessons learned from one project or another is Transfer Learning. This is when there is insufficient data to apply data miners to learn defect predictors, transfer learning can be used to transfer lessons learned from other source projects S to the target project T .
 
@@ -330,10 +349,11 @@ For building any defect predictor we rely on software metrics. Software metrics 
 \begin{table}[]
 \caption{List of software metrics used in this study}
 \label{tbl:metric}
-\begin{tabular}{|c|c|l|p{2cm}|}
+\scriptsize
+\begin{tabular}{|p{1cm}|c|l|p{3cm}|}
 \hline
-\multicolumn{1}{|l|}{Type}        & \multicolumn{1}{l|}{Metric level} & Metric Name & Metric Description             \\ \hline
-\multirow{21}{*}{Product Metrics} & \multirow{6}{*}{File}             & LOC         & Lines of Code                  \\ \cline{3-4} 
+\multicolumn{1}{|l|}{Metric}        & \multicolumn{1}{l|}{Metric level} & Metric Name & Metric Description             \\ \hline
+\multirow{21}{*}{Product   } & \multirow{6}{*}{File}             & LOC         & Lines of Code                  \\ \cline{3-4} 
                                   &                                   & CL          & Comment Lines                  \\ \cline{3-4} 
                                   &                                   & NSTMT       & Number of Statements           \\ \cline{3-4} 
                                   &                                   & NFUNC       & Number of Functions            \\ \cline{3-4} 
@@ -354,7 +374,7 @@ For building any defect predictor we rely on software metrics. Software metrics 
                                   & \multirow{3}{*}{Methods}          & CC          & McCabe Cyclomatic Complexity   \\ \cline{3-4} 
                                   &                                   & FANIN       & Number of Input Data           \\ \cline{3-4} 
                                   &                                   & FANOUT      & Number of Output Data          \\ \hline
-\multirow{5}{*}{Process Metrics}  & \multirow{5}{*}{File}             & NREV        & Number of revisions            \\ \cline{3-4} 
+\multirow{5}{*}{Process }  & \multirow{5}{*}{File}             & NREV        & Number of revisions            \\ \cline{3-4} 
                                   &                                   & NFIX        & Number of revisions a file     \\ \cline{3-4} 
                                   &                                   & ADDED LOC    & Lines added                    \\ \cline{3-4} 
                                   &                                   & DELETED LOC  & Lines deleted                  \\ \cline{3-4} 
@@ -367,20 +387,74 @@ For building any defect predictor we rely on software metrics. Software metrics 
 \section{Experimental Setup}
 \label{sec:Experimental}
 
-In this study we try to establish the presence of generality in SE datasets. In order to that we 
+In this study we try to establish the presence of generality in SE datasets. We do this by analyzing the presence of bellwether incrementally by adding more and more projects and how the bellwether's predictive power changes. In this case to show the presence of generality in SE datasets the predictive power of the bellwether should look like the \textcolor{ao(english)}{GREEN} in figure~\ref{fig:predictive_power}, that is the predictive power of bellwether should increase or remains same, if our results look like the \textcolor{red}{RED} curve, that will show absence of generality in SE datasets.
 
-\subsection{BIRCH}
+In order to achieve this we try to explore the \textit{bellwether effect} as mentioned in ~\ref{sec:related}. We know the default \textit{bellwether method} is very expensive ($ O(N^2) $). Thus in this paper we proposes an alternative transfer learning method (BUBBLE), that explores \textit{bellwether effect} by exploring an order of magnitude faster \textit{bellwether method}. Our approach has three key components:
+
+\bi
+
+    \item A feature extractor to find a representation of each project, which will be used for clustering the projects. 
+    
+    \item A hierarchical clustering model to use the features extracted from previous step to build the hierarchical cluster.
+    
+    \item A transfer learning model to identify bellwether in the hierarchical cluster.
+
+\ei
+
+BUBBLE employs few different algorithms to complete and compose it's 3 different components - 
+
+\subsection{Feature Subset Selection (FSS)}
+\label{subsec:FSS}
+To extract features from each dataset, we use a feature selector algorithm called Feature Subset Selection(FSS)~\cite{hall1999correlation,hall1997feature}. Which is a process of identifying and removing as much irrelevant and redundant information as possible. This is achieved using a correlation based feature evolution strategy to evaluate importance of an attribute and a best first search strategy with back tracking that moves through the search space by making local changes to the current feature subset.Here if the path being explored begins to look less promising, the best first search can back-track to a more promising previous subset and continue the search from there. Given enough time, a best first search will explore the entire search space, so it uses a stopping criterion (i.e. no improvement for five consecutive attributes). XXX
+
+\small{
+\begin{figure}[]
+    \small
+     \begin{lstlisting}[mathescape,linewidth=7.5cm,frame=none,numbers=right]
+      def CFS(data):
+        features = []
+        score = -0.000000001
+        while True:
+            best_feature = None
+            for feature in range(data.features):
+                features.append(feature)
+                temp_score = calculate_corr(data[F])
+                if temp_score > score:
+                    score = temp_score
+                    best_feature = features
+                features.pop()
+            features.append(best_feature)
+            if not improve(score):
+                break
+        return features
+    
+    \end{lstlisting} 
+    \vspace{-0.2cm}
+    \caption{Pseudo-code of Feature Subset Selection}
+    \label{fig:GAP_pseudocode} 
+    \vspace{-0.3cm}
+\end{figure}
+}
+\subsection{Balanced Iterative Reducing and Clustering using Hierarchies (BIRCH)}
 \label{subsec:BIRCH}
+To find presence or absence of generality in SE datasets, we need to incrementally check for ``Bellwether'' from smaller to larger community. A community is a set of project which is similar in nature. We use the BIRCH algorithm on our defect prediction dataset to create a hierarchical clustering tree to form these communities. BIRCH~\cite{zhang1996birch} is  a hierarchical clustering algorithm, which has a ability to incrementally and dynamically cluster incoming, multi-dimensional data in an attempt to produce the best quality clustering. BIRCH also has the ability to identify data points that are not part of the underlying pattern effectively identifying outliers. In this study we uses a modified BIRCH algorithm to store additional information regarding each cluster in the clustering feature tree, which help us in the experiment. XXX
 
-\subsection{CFS}
-\label{subsec:CFS}
-
-\subsection{SMOTE}
+\subsection{Synthetic Minority Over-Sampling Technique (SMOTE)}
 \label{subsec:SMOTE}
 
-\subsection{LR}
+Machine learning models exploits the inherent bias in the dataset to segregate and classify different classes. Hence class imbalance can create major bias towards the majority class when building a machine learning model, thus producing biased model which provides bad classification results. Synthetic Minority Over-Sampling Technique (SMOTE)~\cite{chawla2002smote} is a technique to handle class imbalance by changing the frequency of different classes of the training data. When applied to data, SMOTE sub-samples the majority class (i.e., deletes some examples) while over-sampling the minority class until all classes have the same frequency. In the case of software defect data, the minority class is usually the defective class. During super-sampling, a member of the minority class finds k nearest neighbors. It builds an artificial member of the minority class at some point in-between itself and one of its random nearest neighbors. During that process, some distance function is required which is the \textit{minkowski distance} function.
+
+\subsection{Logistic Regression (LR)}
 \label{subsec:LR}
-   
+
+Logistic regression is a statistical machine learning model that in its basic form uses a logistic function to model a binary dependent variable. In this study we use scikit learn's default logistic regression implementation as our learner for building source models and evaluating on target models inside each community. In this study we selected logistic regression, as it is very fast to build in comparison to other more complex learners and its much more comprehensible and explainable in-terms of attributes and their importance. Logistic Regression is widely used in defect prediction domain and have shown promising results both in-term of predictive power and comprehensibility.
+
+
+\subsection{BUBBLE}
+\label{BUBBLE}
+
+\section{Performance Measures}
+\label{Performance Measures}
 
 \section{Results}
 \label{sec:results}
@@ -458,6 +532,7 @@ The established wisdom in the literature is to depreciate `
 
 The first and second authors conducted this research study as part
 of their internship at the industry in Summer, 2017. 
+
 
 \balance
 
