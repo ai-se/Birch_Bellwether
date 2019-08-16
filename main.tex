@@ -1,6 +1,6 @@
 
 %\documentclass[sigconf]{acmart}
-\documentclass[sigconf]{acmart} 
+\documentclass[sigconf,review]{acmart} 
 \pdfoutput=1
 \usepackage[shortlabels]{enumitem}
 \usepackage{balance}
@@ -55,6 +55,8 @@
 
 \definecolor{Gray}{gray}{0.85}
 \usepackage{tikz}
+
+\usepackage{pgfplots}
 \usepackage{framed}
 \usepackage[framed]{ntheorem}
 \usepackage{multirow}
@@ -574,12 +576,114 @@ Scott-Knott then applies some statistical hypothesis test $H$ to check if $m$ an
 
 \subsection{Continuous Domination(cdom)}
 \label{cdom}
-In this study, we compare each project's performance against all other projects in each cluster at the leaf level of the BIRCH as described in section~\ref{BUBBLE} and section~\ref{Bellwether}. We calculate 5 different performance measure for each project as described in section~\ref{sec:Measures}. In order to find a \textit{bellwether effect} in the performances collected we need to combine those 5 performance measures and then rank them using certain criteria. We have used continuous domination (cdom) for this purpose. continuous domination is defined as the set of all points in the objective space that are not dominated by any other points. Unlike Boolean domination, which says a point is dominated by another if and only if the first point is better in every single objective then the second point, continuous domination combines all the objective into a continuous function to compare and then calculate if one point dominates another. Throughout literature continuous domination has proven to be very effective when multiple goals are concerned. The continuous domination function is defined as below, where P is the total population, k is fitness scaling factor and $X\_1$ is the data points we are calculating the domnation for - 
+In this study, we compare each project's performance against all other projects in each cluster at the leaf level of the BIRCH as described in section~\ref{BUBBLE} and section~\ref{Bellwether}. We calculate 5 different performance measure for each project as described in section~\ref{sec:Measures}. In order to find a \textit{bellwether effect} in the performances collected we need to combine those 5 performance measures and then rank them using certain criteria. We have used continuous domination (cdom) for this purpose. continuous domination is defined as the set of all points in the objective space that are not dominated by any other points. Unlike Boolean domination, which says a point is dominated by another if and only if the first point is better in every single objective then the second point, continuous domination combines all the objective into a continuous function to compare and then calculate if one point dominates another. Throughout literature continuous domination has proven to be very effective when multiple goals are concerned. The continuous domination function is defined as below, where P is the total population, k is fitness scaling factor and $X\_1$ is the data points we are calculating the domination for - 
 
 \begin{equation}
     F(X_1) = \sum_{{(X_2\in P) - X_1}} -e^{-I(X_2,X_1)/k}
 \end{equation}
 
+\small{
+\begin{figure*}[ht!]
+    \centering
+    \begin{tikzpicture}[nodes={draw, circle,fill=pink!50}, ->,sibling distance=.7cm,minimum size=.1cm,scale=.5]
+ 
+    \node{627}
+        child { node {57}
+            child {node {9}} 
+            child {node {9}} 
+            child {node {7}} 
+            child {node {17}}
+            child {node {13}}}
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child { node {127} 
+            child {node {3}} 
+            child {node {9}} 
+            child {node {19}} 
+            child {node {15}}
+            child {node {4}}
+            child {node {17}} 
+            child {node {15}} 
+            child {node {19}} 
+            child {node {11}}
+            child {node {15}}}
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child { node {183} 
+            child {node {8}} 
+            child {node {3}} 
+            child {node {12}} 
+            child {node {16}}
+            child {node {20}}
+            child {node {18}} 
+            child {node {12}} 
+            child {node {4}} 
+            child {node {12}}
+            child {node {16}}
+            child {node {5}}
+            child {node {17}} 
+            child {node {9}} 
+            child {node {9}} 
+            child {node {10}}
+            child {node {14}}}
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child [missing]
+        child { node {260} 
+            child {node {17}} 
+            child {node {17}} 
+            child {node {20}} 
+            child {node {14}}
+            child {node {9}}
+            child {node {13}} 
+            child {node {18}} 
+            child {node {10}} 
+            child {node {18}}
+            child {node {10}}
+            child {node {6}} 
+            child {node {15}} 
+            child {node {14}} 
+            child {node {9}}
+            child {node {10}}
+            child {node {8}} 
+            child {node {7}} 
+            child {node {13}} 
+            child {node {15}}}
+            ;
+\end{tikzpicture}
+    \caption{Example of Hierarchical Clustering for 305 projects}
+    \label{fig:example tree}
+\end{figure*}
+}
 
 \section{Performance Measures}
 \label{sec:Measures}
@@ -600,10 +704,12 @@ In this section, we introduce the following 5 evaluation measures used in this s
 \section{Results}
 \label{sec:results}
 
+
+
 \subsection{RQ1: Can we confirm bellwether on large datasets?}
 \label{sec:rq1}
 
-In the literature, we saw most of the previous studies has shown bellwether effect with very small datasets. In order to use bellwether to prove presence of generality in SE domain datasets, we first have to showcase the bellwether method suggested by Krishna et al. in their experiment works for large datasets. We use our defect prediction dataset with 697 projects for this purpose. We divide the dataset in train\_1 and test\_1 set and then performed a $ N*(N-1) $ comparison on all the projects in train\_1 set to find a bellwether, and then dividing each project in test\_1 set into train\_2 and test\_2 using a train\_test split. We use the train\_2 to train a LR model and test on test\_2 which is represented as \textit{self\_0} in the figures. Similarly we use the bellwether project from train\_1 to train a LR model and test it on test\_2 which is represented as \textit{bellwether0}. We use statistical tests mentioned in section~\ref{stats} to compare the performance of \textit{self\_0} vs \textit{bellwether0} for all the performance measures mentioned in section~\ref{sec:Measures}, which is shown in figure~\ref{fig:recall}, \ref{fig:precision}, \ref{fig:pf}, \ref{fig:popt20}, \ref{fig:ifa} . It is evident that using the \textit{bellwether method} proposed by Krishna et al. we were able to find bellwether effect in large dataset with 697 projects. This answers this RQ and creates the baseline results for our study. In this RQ1 although we are able to find \textit{bellwether effect}, this method is very expensive, requiring a $ N*(N-1) $ comparison, which in our experimental setup took nearly 75 days of computation on a single core machine. Which takes us to the next research question. 
+In the literature, we saw most of the previous studies has shown bellwether effect with very small datasets. In order to use bellwether to prove presence of generality in SE domain datasets, we first have to showcase the bellwether method suggested by Krishna et al. in their experiment works for large datasets. We use our defect prediction dataset with 697 projects for this purpose. We divide the dataset in train\_1 and test\_1 set and then performed a $ N*(N-1) $ comparison on all the projects in train\_1 set to find a bellwether, and then dividing each project in test\_1 set into train\_2 and test\_2 using a train\_test split. We use the train\_2 to train a LR model and test on test\_2 which is represented as \textit{self\_0} in the figures. Similarly we use the bellwether project from train\_1 to train a LR model and test it on test\_2 which is represented as \textit{bellwether0}. We use statistical tests mentioned in section~\ref{stats} to compare the performance of \textit{self\_0} vs \textit{bellwether0} for all the performance measures mentioned in section~\ref{sec:Measures}, which is shown in figure~\ref{fig:recall}, \ref{fig:precision}, \ref{fig:pf}, \ref{fig:popt20}, \ref{fig:ifa} . It is evident that using the \textit{bellwether method} proposed by Krishna et al. we were able to find bellwether effect in large dataset with 697 projects. This answers this RQ and creates the baseline results for our study. In this RQ1 although we are able to find \textit{bellwether effect}, this method is very expensive, requiring a $ N*(N-1) $ comparison, which in our experimental setup took nearly 3 days of computation. Which takes us to the next research question. 
 
 
 
@@ -613,17 +719,12 @@ In the literature, we saw most of the previous studies has shown bellwether effe
 To tame complexity of bellwether in this RQ, we propose a new bellwether method called ``BUBBLE'' to find bellwether in large datasets. This bellwether method is composed of 6 stages, (a) a feature extraction process to summarize each project into a single representative vector, (b) a hierarchical clustering algorithm, which uses the feature vectors to cluster similar projects into community of increasing size at different levels of cluster, (c) a bellwether selection phase where a $N*(N-1)$ comparison is performed at each leaf level cluster and using a cdom calculation in all the metrics mentioned in~\ref{tbl:metric} a bellwether is selected, (d) a iterative bellwether promotion stage, where bellwether from child clusters are promoted as potential bellwethers at parent cluster, (e) another bellwether selection phase at non-leaf levels, where comparisons are only made among potential bellwethers from leaf node and finally (f) a bellwether prediction phase, which suggests a bellwether based on project similarity when a new project is to be predicted. The details of each phase is mentioned in sec~\ref{BUBBLE}. 
 
 In the \textit{bellwether method} proposed by Krishna et al. if there are N projects in a community it will make $\approx N^2$ comparisons to discover the bellwether. While ``BUBBLE'' different approach to discover bellwether by dividing the data into smaller cluster and finding bellwether among each, here if we assume we have m cluster at leaf level with N projects in each, we will have 
-$\approx N^2/m$ comparisons to discover the bellwether which is m times less comparison. Using this process we able to find bellwether in ~1.5 hours, which is order of magnitude faster then the bellwether method proposed by Krishna et al. 
+$\approx N^2/m$ comparisons to discover the bellwether which is m times less comparison. For example if we see the example figure~\ref{fig:example tree} for hierarchically cluster a community of 627 projects, if we use the default \textit{bellwether method} it will require \textbf{393129} comparisons. While if we use the ``BUBBLE'' algorithm to find the bellwether it will require only \textbf{9080} comparisons. Using this process we are able to find bellwether in ~1.5 hours, which is order of magnitude faster then the bellwether method proposed by Krishna et al. 
 
-\begin{tikzpicture}[nodes={draw, circle}, ->]
- 
-    \node{687}
-        child { node {57} }
-        child { node {127} }
-        child { node {183} }
-        child { node {260} };
- 
-\end{tikzpicture}
+
+
+
+
 
 
 
